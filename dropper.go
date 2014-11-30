@@ -15,7 +15,12 @@ func main() {
 	servo := gpio.NewServoDriver(digi, "servo", "0")
 
 	gbot.AddCommand("close", func(params map[string]interface{}) interface{} {
-		servo.Move(45)
+		servo.Move(40)
+		return true
+	})
+
+	gbot.AddCommand("load", func(params map[string]interface{}) interface{} {
+		servo.Move(50)
 		return true
 	})
 
