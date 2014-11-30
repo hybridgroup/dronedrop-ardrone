@@ -14,13 +14,13 @@ func main() {
 	digi := digispark.NewDigisparkAdaptor("digispark")
 	servo := gpio.NewServoDriver(digi, "servo", "0")
 
-	gbot.AddCommand("reset", func(params map[string]interface{}) interface{} {
-		servo.Move(10)
+	gbot.AddCommand("close", func(params map[string]interface{}) interface{} {
+		servo.Move(45)
 		return true
 	})
 
 	gbot.AddCommand("drop", func(params map[string]interface{}) interface{} {
-		servo.Move(150)
+		servo.Move(135)
 		return true
 	})
 
