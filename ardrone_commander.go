@@ -18,12 +18,13 @@ type pair struct {
 
 func main() {
 	gbot := gobot.NewGobot()
+
 	server := api.NewAPI(gbot)
 	server.Port = "8080"
 	server.Start()
 
 	ardroneAdaptor := ardrone.NewArdroneAdaptor("Drone", "127.0.0.1")
-	drone := ardrone.NewArdroneDriver(ardroneAdaptor, "Drone")
+	drone := ardrone.NewArdroneDriver(ardroneAdaptor, "drone")
 
 	digi := digispark.NewDigisparkAdaptor("digispark")
 	servo := gpio.NewServoDriver(digi, "servo", "0")
@@ -31,6 +32,16 @@ func main() {
 	rightStick := pair{x: 0, y: 0}
 	leftStick := pair{x: 0, y: 0}
 	land := false
+
+	close := func() {
+		servo.Move(40)
+	}
+	load := func() {
+		servo.Move(50)
+	}
+	drop := func() {
+		servo.Move(135)
+	}
 
 	work := func() {
 		go func() {
@@ -112,21 +123,32 @@ func main() {
 		}
 
 		if name == "B" && action == "press" {
-			// close
-			servo.Move(40)
+			close()
 		} else if name == "X" && action == "press" {
-			// load
-			servo.Move(50)
+			load()
 		} else if name == "Y" && action == "press" {
-			// drop
-			servo.Move(135)
+			drop()
 		}
 
 		return nil
 	})
 
-	gbot.AddRobot(robot)
+	gbot.AddCommand("close", func(params map[string]interface{}) interface{} {
+		close()
+		return true
+	})
 
+	gbot.AddCommand("load", func(params map[string]interface{}) interface{} {
+		load()
+		return true
+	})
+
+	gbot.AddCommand("drop", func(params map[string]interface{}) interface{} {
+		drop()
+		return true
+	})
+
+	gbot.AddRobot(robot)
 	gbot.Start()
 }
 
