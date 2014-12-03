@@ -16,6 +16,10 @@ type pair struct {
 	y float64
 }
 
+const CLOSE uint8 = 40
+const LOAD uint8 = 50
+const DROP uint8 = 135
+
 func main() {
 	gbot := gobot.NewGobot()
 
@@ -34,13 +38,13 @@ func main() {
 	land := false
 
 	close := func() {
-		servo.Move(40)
+		servo.Move(CLOSE)
 	}
 	load := func() {
-		servo.Move(50)
+		servo.Move(LOAD)
 	}
 	drop := func() {
-		servo.Move(135)
+		servo.Move(DROP)
 	}
 
 	work := func() {
