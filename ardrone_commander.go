@@ -19,6 +19,7 @@ type pair struct {
 const CLOSE uint8 = 40
 const LOAD uint8 = 50
 const DROP uint8 = 135
+const VERSION string = "0.1"
 
 func main() {
 	gbot := gobot.NewGobot()
@@ -150,6 +151,10 @@ func main() {
 	gbot.AddCommand("drop", func(params map[string]interface{}) interface{} {
 		drop()
 		return true
+	})
+
+	gbot.AddCommand("version", func(params map[string]interface{}) interface{} {
+		return VERSION
 	})
 
 	gbot.AddRobot(robot)
