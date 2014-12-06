@@ -16,10 +16,10 @@ type pair struct {
 	y float64
 }
 
-const CLOSE uint8 = 40
+const GRAB uint8 = 40
 const LOAD uint8 = 50
 const DROP uint8 = 135
-const VERSION string = "0.1"
+const VERSION string = "0.2"
 
 func main() {
 	gbot := gobot.NewGobot()
@@ -38,8 +38,8 @@ func main() {
 	leftStick := pair{x: 0, y: 0}
 	land := false
 
-	close := func() {
-		servo.Move(CLOSE)
+	grab := func() {
+		servo.Move(GRAB)
 	}
 	load := func() {
 		servo.Move(LOAD)
@@ -118,6 +118,12 @@ func main() {
 		action := params["action"].(string)
 
 		if name == "A" && action == "press" {
+			if !ardroneAdaptor.Connected() {
+				if errs := ardroneAdaptor.Connect(); len(errs) > 0 {
+					return errs
+				}
+			}
+
 			if land {
 				drone.Land()
 				land = false
@@ -128,7 +134,7 @@ func main() {
 		}
 
 		if name == "B" && action == "press" {
-			close()
+			grab()
 		} else if name == "X" && action == "press" {
 			load()
 		} else if name == "Y" && action == "press" {
@@ -138,8 +144,8 @@ func main() {
 		return nil
 	})
 
-	gbot.AddCommand("close", func(params map[string]interface{}) interface{} {
-		close()
+	gbot.AddCommand("grab", func(params map[string]interface{}) interface{} {
+		grab()
 		return true
 	})
 
@@ -155,6 +161,10 @@ func main() {
 
 	gbot.AddCommand("version", func(params map[string]interface{}) interface{} {
 		return VERSION
+	})
+
+	gbot.AddCommand("disconnect", func(params map[string]interface{}) interface{} {
+		return ardroneAdaptor.Disconnect()
 	})
 
 	gbot.AddRobot(robot)
